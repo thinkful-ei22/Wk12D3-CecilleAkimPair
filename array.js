@@ -4,6 +4,7 @@ const memory = new memoryClass();
 class Array {
    constructor() {
      this.length = 0;
+     this._capacity = 0;
      this.ptr = memory.allocate(this.length);
    }
 
@@ -15,12 +16,15 @@ class Array {
           }
           memory.copy(this.ptr, oldPtr, this.length);
           memory.free(oldPtr);
+          this._capacity = size;
       }
 
-     push(value) {
-       this._resize(this.length + 1);
-       memory.set(this.ptr + this.length, value);
-       this.length++;
+      push(value) {
+         if (this.length >= this._capacity) {
+             this._resize((this.length + 1) * Array.SIZE_RATIO);
+         }
+         memory.set(this.ptr + this.length, value);
+         this.length++;
      }
 
      get(index) {
@@ -73,6 +77,11 @@ function main() {
 
   //add an item to the array
   arr.push(3);
+  // arr.push(5);
+  // arr.push(15);
+  // arr.push(19);
+  // arr.push(45);
+  // arr.push(10);
 
   console.log(arr);
 }
